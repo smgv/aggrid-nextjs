@@ -24,3 +24,24 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.ag-theme-alpine .ag-cell {
+  overflow: visible !important;
+  position: relative;
+  z-index: 1;
+}
+
+.ag-header-row {
+  background-color: #fbfbfb; /* custom background */
+  color: #858585; /* custom font color */
+  font-family: "Geist", sans-serif; /* custom font */
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.ag-cell {
+  font-family: "Geist", sans-serif; /* custom font */
+  font-size: 14px;
+  font-weight: 400;
+  color: #858585;
+}

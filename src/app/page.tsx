@@ -1,103 +1,211 @@
+"use client";
+import { useFetchJson } from "./useFetchJson";
+// React Grid Logic
+import React, { useMemo, useState } from "react";
 import Image from "next/image";
 
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+// Theme
+import {
+  ClientSideRowModelModule,
+  ColDef,
+  IRichCellEditorParams,
+  ModuleRegistry,
+  RowSelectionOptions,
+  TextEditorModule,
+  ValidationModule,
+  ValueFormatterParams,
+  AllCommunityModule,
+} from "ag-grid-community";
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+// Core CSS
+import type { CustomCellRendererProps } from "ag-grid-react";
+import { AgGridReact } from "ag-grid-react";
+import {
+  RichSelectModule,
+  AdvancedFilterModule,
+  ColumnMenuModule,
+  ContextMenuModule,
+} from "ag-grid-enterprise";
+import { colors } from "./colors";
+import ColourCellRenderer from "./ColourCellRenderer";
+
+ModuleRegistry.registerModules([
+  TextEditorModule,
+  ClientSideRowModelModule,
+  RichSelectModule,
+  AllCommunityModule,
+  ValidationModule,
+  AdvancedFilterModule,
+  ColumnMenuModule,
+  ContextMenuModule,
+]);
+
+// Custom Cell Renderer (Display logos based on cell value)
+const CompanyLogoRenderer = (params: CustomCellRendererProps) => (
+  <span
+    style={{
+      display: "flex",
+      height: "100%",
+      width: "100%",
+      alignItems: "center",
+    }}
+  >
+    {params.value && (
+      <Image
+        alt={`${params.value} Flag`}
+        src={`https://www.ag-grid.com/example-assets/space-company-logos/${params.value.toLowerCase()}.png`}
+        width={50}
+        height={50}
+        style={{
+          display: "block",
+          width: "25px",
+          height: "auto",
+          maxHeight: "50%",
+          marginRight: "12px",
+          filter: "brightness(1.1)",
+        }}
+      />
+    )}
+    <p
+      style={{
+        textOverflow: "ellipsis",
+        overflow: "hidden",
+        whiteSpace: "nowrap",
+      }}
+    >
+      {params.value}
+    </p>
+  </span>
+);
+
+/* Custom Cell Renderer (Display tick / cross in 'Successful' column) */
+const MissionResultRenderer = (params: CustomCellRendererProps) => (
+  <span
+    style={{
+      display: "flex",
+      justifyContent: "center",
+      height: "100%",
+      alignItems: "center",
+    }}
+  >
+    {
+      <Image
+        alt={`${params.value}`}
+        src={`https://www.ag-grid.com/example-assets/icons/${
+          params.value ? "tick-in-circle" : "cross-in-circle"
+        }.png`}
+        width={16}
+        height={16}
+      />
+    }
+  </span>
+);
+
+/* Format Date Cells */
+const dateFormatter = (params: ValueFormatterParams): string => {
+  return new Date(params.value).toLocaleDateString("en-us", {
+    weekday: "long",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+};
+
+// Row Data Interface
+interface IRow {
+  mission: string;
+  company: string;
+  location: string;
+  date: string;
+  time: string;
+  rocket: string;
+  price: number;
+  successful: boolean;
+}
+
+const rowSelection: RowSelectionOptions = {
+  mode: "multiRow",
+  headerCheckbox: false,
+};
+
+// Create new GridExample component
+const App = () => {
+  // Row Data: The data to be displayed.
+  const { data, loading } = useFetchJson<IRow>(
+    "https://www.ag-grid.com/example-assets/space-mission-data.json"
+  );
+
+  // Column Definitions: Defines & controls grid columns.
+  const [colDefs] = useState<ColDef[]>([
+    {
+      field: "mission",
+      width: 150,
+    },
+    {
+      field: "company",
+      width: 130,
+      cellRenderer: CompanyLogoRenderer,
+    },
+    {
+      field: "location",
+      width: 225,
+    },
+    {
+      field: "date",
+      valueFormatter: dateFormatter,
+    },
+    {
+      field: "price",
+      width: 130,
+      valueFormatter: (params: ValueFormatterParams) => {
+        return "£" + params.value.toLocaleString();
+      },
+    },
+    {
+      field: "successful",
+      width: 120,
+      cellRenderer: MissionResultRenderer,
+    },
+    { field: "rocket" },
+    {
+      headerName: "Rich Select Editor",
+      field: "color",
+      cellRenderer: ColourCellRenderer,
+      cellEditor: "agRichSelectCellEditor",
+      cellEditorParams: {
+        values: colors,
+        cellRenderer: ColourCellRenderer,
+        valueListMaxHeight: 220,
+      } as IRichCellEditorParams,
+    },
+  ]);
+
+  // Apply settings across all columns
+  const defaultColDef = useMemo<ColDef>(() => {
+    return {
+      filter: true,
+      editable: true,
+      resizable: true,
+      sortable: true,
+      flex: 1,
+    };
+  }, []);
+
+  // Container: Defines the grid's theme & dimensions.
+  return (
+    <div style={{ width: "100%", height: "100dvh", overflow: "visible" }}>
+      <AgGridReact
+        rowData={data}
+        loading={loading}
+        columnDefs={colDefs}
+        defaultColDef={defaultColDef}
+        pagination={true}
+        rowSelection={rowSelection}
+        onSelectionChanged={() => console.log("Row Selected!")}
+        stopEditingWhenCellsLoseFocus={true}
+      />
     </div>
   );
-}
+};
+
+export default App;
