@@ -62,3 +62,15 @@ body {
 .ag-row {
   border-bottom: 1px solid #f1f1f1;
 }
+
+.actions-button-cell {
+  overflow: visible;
+}
+
+.ag-row.ag-row-focus {
+  z-index: 1;
+}
+
+.btn {
+  line-height: 0.5;
+}

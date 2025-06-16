@@ -3,18 +3,23 @@ import { useFetchJson } from "./useFetchJson";
 // React Grid Logic
 import React, { useMemo, useState } from "react";
 import Image from "next/image";
+import ActionCellRenderer from "./ActionCellRenderer";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js"; // Optional: for dropdowns/tooltips etc.
+// import "../styles/globals.css";
 
 // Theme
 import {
   ClientSideRowModelModule,
   ColDef,
-  IRichCellEditorParams,
+  // IRichCellEditorParams,
   ModuleRegistry,
   RowSelectionOptions,
   TextEditorModule,
   ValidationModule,
   ValueFormatterParams,
   AllCommunityModule,
+  GridReadyEvent,
 } from "ag-grid-community";
 
 // Core CSS
@@ -26,8 +31,8 @@ import {
   ColumnMenuModule,
   ContextMenuModule,
 } from "ag-grid-enterprise";
-import { colors } from "./colors";
-import ColourCellRenderer from "./ColourCellRenderer";
+// import { colors } from "./colors";
+// import ColourCellRenderer from "./ColourCellRenderer";
 
 ModuleRegistry.registerModules([
   TextEditorModule,
@@ -170,13 +175,8 @@ const App = () => {
     {
       headerName: "Rich Select Editor",
       field: "color",
-      cellRenderer: ColourCellRenderer,
-      cellEditor: "agRichSelectCellEditor",
-      cellEditorParams: {
-        values: colors,
-        cellRenderer: ColourCellRenderer,
-        valueListMaxHeight: 220,
-      } as IRichCellEditorParams,
+      cellRenderer: ActionCellRenderer,
+      cellClass: "actions-button-cell",
     },
   ]);
 
@@ -206,6 +206,9 @@ const App = () => {
         rowSelection={rowSelection}
         onSelectionChanged={() => console.log("Row Selected!")}
         stopEditingWhenCellsLoseFocus={true}
+        onGridReady={(params: GridReadyEvent) => {
+          params.api.sizeColumnsToFit();
+        }}
       />
     </div>
   );
