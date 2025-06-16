@@ -193,7 +193,10 @@ const App = () => {
 
   // Container: Defines the grid's theme & dimensions.
   return (
-    <div style={{ width: "100%", height: "100dvh", overflow: "visible" }}>
+    <div
+      style={{ width: "90%", height: "80dvh", overflow: "visible" }}
+      className="mx-auto mt-20"
+    >
       <AgGridReact
         rowData={data}
         loading={loading}
