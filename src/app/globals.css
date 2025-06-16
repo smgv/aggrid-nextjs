@@ -37,6 +37,15 @@ body {
   font-family: "Geist", sans-serif; /* custom font */
   font-size: 12px;
   font-weight: 600;
+  border-bottom: 1px solid transparent;
+}
+
+.ag-header-container {
+  border-bottom: 1px solid transparent;
+}
+
+.ag-header-cell {
+  border-bottom: 1px solid transparent;
 }
 
 .ag-cell {
@@ -44,4 +53,12 @@ body {
   font-size: 14px;
   font-weight: 400;
   color: #858585;
+}
+
+.ag-icon-menu-alt {
+  color: #000000 !important;
+}
+
+.ag-row {
+  border-bottom: 1px solid #f1f1f1;
 }
